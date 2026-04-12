@@ -60,9 +60,16 @@ export async function POST(req: NextRequest) {
       currency: order.currency,
       keyId: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Checkout error:", error);
-    const message = error instanceof Error ? error.message : "Internal server error";
+    let message = "Internal server error";
+    if (error instanceof Error) {
+      message = error.message;
+    } else if (typeof error === "object" && error !== null) {
+      message = JSON.stringify(error);
+    } else if (typeof error === "string") {
+      message = error;
+    }
     return NextResponse.json(
       { error: message },
       { status: 500 }
