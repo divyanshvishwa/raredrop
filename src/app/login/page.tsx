@@ -13,7 +13,7 @@ export default function LoginPage() {
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [signupStep, setSignupStep] = useState<1 | 2>(1);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-  const [otpHint, setOtpHint] = useState("");
+
   const [resendTimer, setResendTimer] = useState(0);
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
@@ -41,7 +41,7 @@ export default function LoginPage() {
       }
       setSignupStep(2);
       setResendTimer(60);
-      if (data.otp) setOtpHint(data.otp);
+
     } catch {
       setError("Network error. Try again.");
     }
@@ -82,7 +82,6 @@ export default function LoginPage() {
         setMode("login");
         setSignupStep(1);
         setOtp(["", "", "", "", "", ""]);
-        setOtpHint("");
         alert("Account created! Check your email to confirm, then sign in.");
       }
     } catch {
@@ -218,16 +217,6 @@ export default function LoginPage() {
               <p className="text-sm font-semibold">{email}</p>
             </div>
 
-            {otpHint && (
-              <div className="rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 text-center">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-amber-600 mb-1">
-                  Test Mode — Your Code
-                </p>
-                <p className="text-2xl font-mono font-bold tracking-[0.3em] text-amber-700">
-                  {otpHint}
-                </p>
-              </div>
-            )}
 
             <div className="flex justify-center gap-2" onPaste={handleOtpPaste}>
               {otp.map((digit, i) => (
@@ -260,7 +249,6 @@ export default function LoginPage() {
                 onClick={() => {
                   setSignupStep(1);
                   setOtp(["", "", "", "", "", ""]);
-                  setOtpHint("");
                   setError("");
                 }}
                 className="hover:text-foreground"
@@ -332,7 +320,7 @@ export default function LoginPage() {
             <>
               Don&apos;t have an account?{" "}
               <button
-                onClick={() => { setMode("signup"); setError(""); setSignupStep(1); setOtp(["","","","","",""]); setOtpHint(""); }}
+                onClick={() => { setMode("signup"); setError(""); setSignupStep(1); setOtp(["","","","","",""]); }}
                 className="font-semibold text-foreground hover:opacity-70"
               >
                 Sign Up
@@ -342,7 +330,7 @@ export default function LoginPage() {
             <>
               Already have an account?{" "}
               <button
-                onClick={() => { setMode("login"); setError(""); setSignupStep(1); setOtp(["","","","","",""]); setOtpHint(""); }}
+                onClick={() => { setMode("login"); setError(""); setSignupStep(1); setOtp(["","","","","",""]); }}
                 className="font-semibold text-foreground hover:opacity-70"
               >
                 Sign In
