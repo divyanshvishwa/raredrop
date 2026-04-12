@@ -39,7 +39,7 @@ export default async function HomePage() {
               <div className="space-y-6 lg:space-y-8">
                 <div className="space-y-3">
                   <p className="hero-fade-in text-[11px] font-medium uppercase tracking-[0.3em] text-muted">
-                    Summer 2024
+                    Summer 2026
                   </p>
                   <h1 className="text-4xl font-extrabold uppercase tracking-[-0.02em] leading-[0.95] sm:text-5xl md:text-7xl lg:text-8xl">
                     <div className="hero-text-line"><span>New</span></div>
