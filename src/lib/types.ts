@@ -6,6 +6,7 @@ export interface Product {
   total_quantity: number;
   remaining_quantity: number;
   image_url: string | null;
+  images: string[];
   drop_id: string;
   sizes: string[];
   created_at: string;

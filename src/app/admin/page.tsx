@@ -19,7 +19,7 @@ export default function AdminDashboardPage() {
   const [loadingData, setLoadingData] = useState(true);
 
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editForm, setEditForm] = useState({ name: "", price: "", remaining_quantity: "", total_quantity: "", image_url: "" });
+  const [editForm, setEditForm] = useState({ name: "", price: "", remaining_quantity: "", total_quantity: "", image_url: "", images: [] as string[] });
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -32,6 +32,7 @@ export default function AdminDashboardPage() {
       remaining_quantity: String(p.remaining_quantity),
       total_quantity: String(p.total_quantity),
       image_url: p.image_url ?? "",
+      images: p.images ?? [],
     });
   };
 
@@ -51,6 +52,7 @@ export default function AdminDashboardPage() {
         remaining_quantity: Number(editForm.remaining_quantity),
         total_quantity: Number(editForm.total_quantity),
         image_url: editForm.image_url || null,
+        images: editForm.images,
       }),
     });
     const json = await res.json();
@@ -321,7 +323,7 @@ export default function AdminDashboardPage() {
 
                           {/* Image Upload */}
                           <div className="space-y-1.5">
-                            <label className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted">Product Image</label>
+                            <label className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted">Main Image</label>
                             <div className="flex gap-3">
                               <input
                                 type="url"
@@ -364,6 +366,55 @@ export default function AdminDashboardPage() {
                               >
                                 {uploading ? "Uploading..." : "Upload"}
                               </button>
+                            </div>
+                          </div>
+
+                          {/* Additional Images */}
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted">
+                              Gallery Images ({editForm.images.length})
+                            </label>
+                            <div className="flex flex-wrap gap-2">
+                              {editForm.images.map((url, idx) => (
+                                <div key={idx} className="group relative h-16 w-16 rounded-md overflow-hidden bg-surface border border-border">
+                                  <Image src={url} alt={`Gallery ${idx + 1}`} fill sizes="64px" className="object-cover" />
+                                  <button
+                                    type="button"
+                                    onClick={() => setEditForm((prev) => ({ ...prev, images: prev.images.filter((_, i) => i !== idx) }))}
+                                    className="absolute inset-0 flex items-center justify-center bg-black/60 text-white text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity"
+                                  >
+                                    ✕
+                                  </button>
+                                </div>
+                              ))}
+                              <label className="flex h-16 w-16 cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-border text-muted hover:border-foreground hover:text-foreground transition-colors">
+                                <span className="text-lg">+</span>
+                                <input
+                                  type="file"
+                                  accept="image/jpeg,image/png,image/webp,image/gif"
+                                  className="hidden"
+                                  onChange={async (e) => {
+                                    const file = e.target.files?.[0];
+                                    if (!file) return;
+                                    setUploading(true);
+                                    const form = new FormData();
+                                    form.append("file", file);
+                                    try {
+                                      const res = await fetch("/api/admin/upload", { method: "POST", body: form });
+                                      const json = await res.json();
+                                      if (res.ok && json.url) {
+                                        setEditForm((prev) => ({ ...prev, images: [...prev.images, json.url] }));
+                                      } else {
+                                        alert(json.error || "Upload failed");
+                                      }
+                                    } catch {
+                                      alert("Upload failed");
+                                    }
+                                    setUploading(false);
+                                    e.target.value = "";
+                                  }}
+                                />
+                              </label>
                             </div>
                           </div>
 

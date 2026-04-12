@@ -1,10 +1,10 @@
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import type { Product } from "@/lib/types";
 import { AddToCartButton } from "./add-to-cart-button";
 import { WishlistButton } from "@/components/wishlist-button";
 import { Reveal } from "@/components/reveal";
+import { ProductGallery } from "@/components/product-gallery";
 
 export const revalidate = 15;
 
@@ -37,32 +37,14 @@ export default async function ProductPage({
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8 sm:py-16">
       <div className="grid grid-cols-1 gap-8 sm:gap-16 md:grid-cols-2">
-        {/* Product Image */}
+        {/* Product Image Gallery */}
         <Reveal variant="left">
-          <div className="relative aspect-[3/4] overflow-hidden bg-white img-hover-zoom rounded-lg shadow-lg">
-          {product.image_url ? (
-            <Image
-              src={product.image_url}
-              alt={product.name}
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover"
-              priority
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center text-muted">
-              No image
-            </div>
-          )}
-          {/* Type badge on image */}
-          <div className="absolute top-4 left-4">
-            <span className={`px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] rounded ${
-              isExclusive ? "bg-white text-black" : "bg-black/70 text-white"
-            }`}>
-              {isExclusive ? "1/1 Exclusive" : "Core"}
-            </span>
-          </div>
-          </div>
+          <ProductGallery
+            mainImage={product.image_url}
+            images={product.images ?? []}
+            name={product.name}
+            isExclusive={isExclusive}
+          />
         </Reveal>
 
         {/* Product Details */}

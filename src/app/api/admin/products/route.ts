@@ -17,6 +17,7 @@ export async function PATCH(request: NextRequest) {
   if (total_quantity !== undefined)
     updates.total_quantity = Number(total_quantity);
   if (body.image_url !== undefined) updates.image_url = body.image_url;
+  if (body.images !== undefined) updates.images = body.images;
 
   if (Object.keys(updates).length === 0) {
     return NextResponse.json({ error: "No fields to update" }, { status: 400 });
