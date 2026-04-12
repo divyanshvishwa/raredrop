@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800">
+  <rect width="800" height="800" fill="#1a1a1a"/>
+  <text x="400" y="370" text-anchor="middle" font-family="system-ui,sans-serif" font-size="16" font-weight="bold" fill="#ffffff" letter-spacing="6">LIMITED</text>
+  <text x="400" y="400" text-anchor="middle" font-family="system-ui,sans-serif" font-size="22" font-weight="bold" fill="#ffffff" letter-spacing="4">RARE</text>
+  <text x="400" y="430" text-anchor="middle" font-family="system-ui,sans-serif" font-size="22" font-weight="bold" fill="#ffffff" letter-spacing="4">DROP</text>
+  <text x="400" y="470" text-anchor="middle" font-family="system-ui,sans-serif" font-size="12" fill="#666666">DROP 001 – 04</text>
+</svg>
