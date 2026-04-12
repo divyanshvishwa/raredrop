@@ -31,12 +31,12 @@ export default async function ExclusivePage() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <section className="mx-auto max-w-7xl px-6 pt-28 pb-16">
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 pt-16 sm:pt-28 pb-10 sm:pb-16">
         <Reveal className="space-y-4">
           <p className="text-[10px] font-semibold uppercase tracking-[0.35em] text-muted">
             One of One
           </p>
-          <h1 className="text-5xl font-extrabold uppercase tracking-tight md:text-6xl lg:text-7xl">
+          <h1 className="text-3xl font-extrabold uppercase tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
             Exclusive
             <br />
             Collection
@@ -49,7 +49,7 @@ export default async function ExclusivePage() {
       </section>
 
       {/* Product Grid */}
-      <section className="mx-auto max-w-7xl px-6 pb-32">
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 pb-16 sm:pb-32">
         {products.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <p className="text-sm text-muted">No exclusive pieces available right now.</p>

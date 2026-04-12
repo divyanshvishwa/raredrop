@@ -32,8 +32,8 @@ export default async function ProductPage({
   const soldOut = product.remaining_quantity === 0;
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-16">
-      <div className="grid grid-cols-1 gap-16 md:grid-cols-2">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8 sm:py-16">
+      <div className="grid grid-cols-1 gap-8 sm:gap-16 md:grid-cols-2">
         {/* Product Image */}
         <Reveal variant="left">
           <div className="relative aspect-[3/4] overflow-hidden bg-white img-hover-zoom rounded-lg shadow-lg">
@@ -56,12 +56,12 @@ export default async function ProductPage({
 
         {/* Product Details */}
         <Reveal variant="right" delay={0.15}>
-          <div className="flex flex-col justify-center space-y-10">
+          <div className="flex flex-col justify-center space-y-6 sm:space-y-10">
           <div className="space-y-4">
             <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted">
               {product.type === "exclusive" ? "1/1 Collection" : "Core Collection"}
             </p>
-            <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl">
+            <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl">
               {product.name}
             </h1>
             <p className="text-xl text-gray-500">
