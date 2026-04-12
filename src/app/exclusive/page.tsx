@@ -31,31 +31,42 @@ export default async function ExclusivePage() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 pt-16 sm:pt-28 pb-10 sm:pb-16">
-        <Reveal className="space-y-4">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.35em] text-muted">
-            One of One
-          </p>
-          <h1 className="text-3xl font-extrabold uppercase tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-            Exclusive
-            <br />
-            Collection
-          </h1>
-          <p className="max-w-md text-sm leading-relaxed text-muted">
-            Each piece exists only once. No restocks, no duplicates.
-            Once sold, it belongs to one person forever.
-          </p>
-        </Reveal>
+      <section className="bg-[#0a0a0a] text-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-16 sm:pt-28 pb-10 sm:pb-16">
+          <Reveal className="space-y-4">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.35em] text-white/50">
+              One of One — Only 1 Piece Exists
+            </p>
+            <h1 className="text-3xl font-extrabold uppercase tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+              Exclusive
+              <br />
+              Collection
+            </h1>
+            <p className="max-w-md text-sm leading-relaxed text-white/50">
+              Each piece exists only once. No restocks, no duplicates.
+              Once sold, it belongs to one person forever. Own a true collectible.
+            </p>
+            <div className="flex items-center gap-6 pt-2">
+              <div className="flex items-center gap-2">
+                <div className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/60">
+                  Live Drop
+                </span>
+              </div>
+            </div>
+          </Reveal>
+        </div>
       </section>
 
       {/* Product Grid */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 pb-16 sm:pb-32">
+      <section className="bg-[#0a0a0a] text-white pb-16 sm:pb-32">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
         {products.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
-            <p className="text-sm text-muted">No exclusive pieces available right now.</p>
+            <p className="text-sm text-white/50">No exclusive pieces available right now.</p>
             <Link
               href="/"
-              className="mt-6 text-xs font-semibold uppercase tracking-[0.15em] hover:opacity-70 transition-opacity"
+              className="mt-6 text-xs font-semibold uppercase tracking-[0.15em] text-white hover:opacity-70 transition-opacity"
             >
               Back to Home &rarr;
             </Link>
@@ -67,6 +78,7 @@ export default async function ExclusivePage() {
             ))}
           </StaggerReveal>
         )}
+        </div>
       </section>
     </div>
   );

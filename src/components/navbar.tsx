@@ -58,10 +58,13 @@ export function Navbar() {
               Home
             </Link>
             <Link href="/#collection" className="hover:text-foreground transition-colors">
-              Collections
+              Drop
             </Link>
-            <Link href="/#new" className="hover:text-foreground transition-colors">
-              New
+            <Link href="/#collection" className="hover:text-foreground transition-colors">
+              Core Collection
+            </Link>
+            <Link href="/#about" className="hover:text-foreground transition-colors">
+              About
             </Link>
           </div>
         </div>
@@ -174,13 +177,16 @@ export function Navbar() {
             Home
           </Link>
           <Link href="/#collection" onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-muted hover:text-foreground">
-            Collections
+            Drop
           </Link>
-          <Link href="/#new" onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-muted hover:text-foreground">
-            New
+          <Link href="/#collection" onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-muted hover:text-foreground">
+            Core Collection
           </Link>
           <Link href="/exclusive" onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-muted hover:text-foreground">
-            Exclusive
+            Exclusive 1/1
+          </Link>
+          <Link href="/#about" onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-muted hover:text-foreground">
+            About
           </Link>
           <Link href="/login" onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-muted hover:text-foreground">
             Login
