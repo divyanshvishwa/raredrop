@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabaseBrowser } from "@/lib/supabase-browser";
@@ -11,7 +11,108 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [mode, setMode] = useState<"login" | "signup">("login");
+  const [signupStep, setSignupStep] = useState<1 | 2>(1);
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [otpHint, setOtpHint] = useState("");
+  const [resendTimer, setResendTimer] = useState(0);
+  const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
+
+  useEffect(() => {
+    if (resendTimer <= 0) return;
+    const t = setTimeout(() => setResendTimer((v) => v - 1), 1000);
+    return () => clearTimeout(t);
+  }, [resendTimer]);
+
+  const sendOtp = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim().toLowerCase(), action: "send" }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Failed to send OTP");
+        setLoading(false);
+        return;
+      }
+      setSignupStep(2);
+      setResendTimer(60);
+      if (data.otp) setOtpHint(data.otp);
+    } catch {
+      setError("Network error. Try again.");
+    }
+    setLoading(false);
+  };
+
+  const verifyOtpAndSignup = async () => {
+    setLoading(true);
+    setError("");
+    const code = otp.join("");
+    if (code.length !== 6) {
+      setError("Enter the full 6-digit code");
+      setLoading(false);
+      return;
+    }
+    try {
+      const res = await fetch("/api/otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim().toLowerCase(), action: "verify", code }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Verification failed");
+        setLoading(false);
+        return;
+      }
+      // OTP verified — create account
+      const { error: signUpError } = await supabaseBrowser.auth.signUp({
+        email,
+        password,
+        options: { emailRedirectTo: `${window.location.origin}/auth/callback?next=/dashboard` },
+      });
+      if (signUpError) {
+        setError(signUpError.message);
+      } else {
+        setError("");
+        setMode("login");
+        setSignupStep(1);
+        setOtp(["", "", "", "", "", ""]);
+        setOtpHint("");
+        alert("Account created! Check your email to confirm, then sign in.");
+      }
+    } catch {
+      setError("Network error. Try again.");
+    }
+    setLoading(false);
+  };
+
+  const handleOtpChange = (index: number, value: string) => {
+    if (!/^\d*$/.test(value)) return;
+    const next = [...otp];
+    next[index] = value.slice(-1);
+    setOtp(next);
+    if (value && index < 5) otpRefs.current[index + 1]?.focus();
+  };
+
+  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent) => {
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      otpRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handleOtpPaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const text = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+    const next = [...otp];
+    for (let i = 0; i < 6; i++) next[i] = text[i] || "";
+    setOtp(next);
+    otpRefs.current[Math.min(text.length, 5)]?.focus();
+  };
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,17 +130,10 @@ export default function LoginPage() {
         router.push("/dashboard");
       }
     } else {
-      const { error } = await supabaseBrowser.auth.signUp({
-        email,
-        password,
-      });
-      if (error) {
-        setError(error.message);
-      } else {
-        setError("");
-        setMode("login");
-        alert("Check your email for the confirmation link.");
-      }
+      // Signup step 1: send OTP
+      await sendOtp();
+      setLoading(false);
+      return;
     }
     setLoading(false);
   };
@@ -114,6 +208,77 @@ export default function LoginPage() {
         </div>
 
         {/* Email Form */}
+        {mode === "signup" && signupStep === 2 ? (
+          /* OTP Verification Step */
+          <div className="space-y-6">
+            <div className="text-center space-y-1">
+              <p className="text-sm text-muted">
+                Enter the 6-digit code sent to
+              </p>
+              <p className="text-sm font-semibold">{email}</p>
+            </div>
+
+            {otpHint && (
+              <div className="rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 text-center">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-amber-600 mb-1">
+                  Test Mode — Your Code
+                </p>
+                <p className="text-2xl font-mono font-bold tracking-[0.3em] text-amber-700">
+                  {otpHint}
+                </p>
+              </div>
+            )}
+
+            <div className="flex justify-center gap-2" onPaste={handleOtpPaste}>
+              {otp.map((digit, i) => (
+                <input
+                  key={i}
+                  ref={(el) => { otpRefs.current[i] = el; }}
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={1}
+                  value={digit}
+                  onChange={(e) => handleOtpChange(i, e.target.value)}
+                  onKeyDown={(e) => handleOtpKeyDown(i, e)}
+                  className="w-12 h-14 text-center text-xl font-bold rounded-lg border border-border bg-card outline-none transition-colors focus:border-foreground"
+                />
+              ))}
+            </div>
+
+            {error && <p className="text-xs text-red-500 text-center">{error}</p>}
+
+            <button
+              onClick={verifyOtpAndSignup}
+              disabled={loading || otp.join("").length !== 6}
+              className="w-full rounded-lg bg-foreground py-3.5 text-xs font-semibold uppercase tracking-[0.15em] text-white transition-colors hover:bg-neutral-800 disabled:opacity-50"
+            >
+              {loading ? "Verifying..." : "Verify & Create Account"}
+            </button>
+
+            <div className="flex items-center justify-between text-xs text-muted">
+              <button
+                onClick={() => {
+                  setSignupStep(1);
+                  setOtp(["", "", "", "", "", ""]);
+                  setOtpHint("");
+                  setError("");
+                }}
+                className="hover:text-foreground"
+              >
+                ← Change email
+              </button>
+              <button
+                onClick={sendOtp}
+                disabled={resendTimer > 0 || loading}
+                className="hover:text-foreground disabled:opacity-40"
+              >
+                {resendTimer > 0
+                  ? `Resend in ${resendTimer}s`
+                  : "Resend code"}
+              </button>
+            </div>
+          </div>
+        ) : (
         <form onSubmit={handleEmailAuth} className="space-y-4">
           <div className="space-y-1.5">
             <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
@@ -156,9 +321,10 @@ export default function LoginPage() {
               ? "Please wait..."
               : mode === "login"
               ? "Sign In"
-              : "Create Account"}
+              : "Send Verification Code"}
           </button>
         </form>
+        )}
 
         {/* Toggle mode */}
         <p className="text-center text-sm text-muted">
@@ -166,7 +332,7 @@ export default function LoginPage() {
             <>
               Don&apos;t have an account?{" "}
               <button
-                onClick={() => { setMode("signup"); setError(""); }}
+                onClick={() => { setMode("signup"); setError(""); setSignupStep(1); setOtp(["","","","","",""]); setOtpHint(""); }}
                 className="font-semibold text-foreground hover:opacity-70"
               >
                 Sign Up
@@ -176,7 +342,7 @@ export default function LoginPage() {
             <>
               Already have an account?{" "}
               <button
-                onClick={() => { setMode("login"); setError(""); }}
+                onClick={() => { setMode("login"); setError(""); setSignupStep(1); setOtp(["","","","","",""]); setOtpHint(""); }}
                 className="font-semibold text-foreground hover:opacity-70"
               >
                 Sign In
