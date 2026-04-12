@@ -60,18 +60,10 @@ export async function POST(req: NextRequest) {
       currency: order.currency,
       keyId: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
     });
-  } catch (error: unknown) {
+  } catch (error) {
     console.error("Checkout error:", error);
-    let message = "Internal server error";
-    if (error instanceof Error) {
-      message = error.message;
-    } else if (typeof error === "object" && error !== null) {
-      message = JSON.stringify(error);
-    } else if (typeof error === "string") {
-      message = error;
-    }
     return NextResponse.json(
-      { error: message },
+      { error: "Checkout failed. Please try again." },
       { status: 500 }
     );
   }
