@@ -1,7 +1,7 @@
 "use client";
 
 import { useWishlistStore } from "@/lib/wishlist-store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface WishlistButtonProps {
   productId: string;
@@ -13,8 +13,14 @@ interface WishlistButtonProps {
 
 export function WishlistButton({ productId, name, price, imageUrl, className = "" }: WishlistButtonProps) {
   const { isWishlisted, toggleItem } = useWishlistStore();
-  const wishlisted = isWishlisted(productId);
+  const [mounted, setMounted] = useState(false);
   const [animating, setAnimating] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const wishlisted = mounted && isWishlisted(productId);
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();

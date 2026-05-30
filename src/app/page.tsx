@@ -41,7 +41,7 @@ export default async function HomePage() {
     <div>
       {/* Hero Section */}
       <section className="relative">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="mx-auto max-w-[1600px] px-4 sm:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-[50vh] lg:min-h-[65vh]">
 
             {/* Hero Content */}
@@ -121,7 +121,7 @@ export default async function HomePage() {
 
       {/* Scarcity Banner */}
       <section className="bg-foreground text-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-4 flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-[10px] font-bold uppercase tracking-[0.25em]">
+        <div className="mx-auto max-w-[1600px] px-4 sm:px-6 py-4 flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-[10px] font-bold uppercase tracking-[0.25em]">
           <span>Limited Edition</span>
           <span className="hidden sm:inline text-white/30">•</span>
           <span>Never Restocked</span>
@@ -133,7 +133,7 @@ export default async function HomePage() {
       </section>
 
       {/* Core Collection */}
-      <section id="collection" className="mx-auto max-w-7xl px-4 sm:px-6 py-8 sm:py-14">
+      <section id="collection" className="mx-auto max-w-[1600px] px-4 sm:px-6 py-8 sm:py-14">
         <Reveal className="mb-6 sm:mb-10 space-y-2">
           <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted">
             Drop 001 — Core
@@ -155,7 +155,7 @@ export default async function HomePage() {
       {/* Exclusive 1/1 Collection — premium dark section */}
       {exclusiveProducts.length > 0 && (
         <section id="exclusive" className="bg-[#0a0a0a] text-white">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8 sm:py-14">
+          <div className="mx-auto max-w-[1600px] px-4 sm:px-6 py-8 sm:py-14">
             <Reveal className="mb-6 sm:mb-10 space-y-2">
               <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-white/50">
                 One of One — Exclusive
@@ -178,7 +178,7 @@ export default async function HomePage() {
 
       {/* About / Brand */}
       <section id="about" className="border-t border-border">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8 sm:py-14">
+          <div className="mx-auto max-w-[1600px] px-4 sm:px-6 py-8 sm:py-14">
           <div className="grid grid-cols-1 gap-6 sm:gap-10 md:grid-cols-2 md:items-center">
             <Reveal variant="left" className="space-y-4">
               <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted">
@@ -229,7 +229,7 @@ export default async function HomePage() {
 
       {/* Footer */}
       <footer className="border-t border-border py-6 sm:py-10">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="mx-auto max-w-[1600px] px-4 sm:px-6">
           <Reveal className="flex flex-col items-center gap-4 text-center">
             <p className="text-lg font-extrabold tracking-tight">RAREDROP</p>
             <p className="text-xs text-muted max-w-xs">Limited Edition. Never Restocked. Never Repeated.</p>

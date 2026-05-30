@@ -35,7 +35,7 @@ export default async function ProductPage({
   const soldPercent = product.total_quantity > 0 ? (soldCount / product.total_quantity) * 100 : 0;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-10">
+    <div className="mx-auto max-w-\[1600px\] px-4 sm:px-6 py-6 sm:py-10">
       <div className="grid grid-cols-1 gap-8 sm:gap-16 md:grid-cols-2">
         {/* Product Image Gallery */}
         <Reveal variant="left">

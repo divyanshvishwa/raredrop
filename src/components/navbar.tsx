@@ -58,7 +58,7 @@ export function Navbar() {
 
   return (
     <header className="nav-enter sticky top-0 z-50 bg-background/90 backdrop-blur-sm border-b border-border">
-      <nav className="mx-auto flex h-14 sm:h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
+      <nav className="mx-auto flex h-14 sm:h-16 max-w-[1600px] items-center justify-between px-4 sm:px-6">
         {/* Left: Menu icon + Links */}
         <div className="flex items-center gap-8">
           {/* Mobile menu toggle */}

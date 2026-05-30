@@ -98,7 +98,7 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="mx-auto flex min-h-[60vh] max-w-7xl flex-col items-center justify-center px-6">
+      <div className="mx-auto flex min-h-[60vh] max-w-[1600px] flex-col items-center justify-center px-6">
         <p className="text-sm text-gray-500">Your cart is empty</p>
         <Link
           href="/"

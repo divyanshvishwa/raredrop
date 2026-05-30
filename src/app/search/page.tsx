@@ -29,7 +29,7 @@ export default async function SearchPage({
   const results = query ? await searchProducts(query) : [];
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-10">
+    <div className="mx-auto max-w-[1600px] px-6 py-10">
       <div className="mb-12 space-y-3">
         <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted">
           Search

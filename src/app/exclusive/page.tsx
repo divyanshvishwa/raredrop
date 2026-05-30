@@ -32,7 +32,7 @@ export default async function ExclusivePage() {
     <div className="min-h-screen">
       {/* Header */}
       <section className="bg-[#0a0a0a] text-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-10 sm:pt-16 pb-6 sm:pb-10">
+        <div className="mx-auto max-w-[1600px] px-4 sm:px-6 pt-10 sm:pt-16 pb-6 sm:pb-10">
           <Reveal className="space-y-3">
             <p className="text-[10px] font-semibold uppercase tracking-[0.35em] text-white/50">
               One of One — Only 1 Piece Exists
@@ -60,7 +60,7 @@ export default async function ExclusivePage() {
 
       {/* Product Grid */}
       <section className="bg-[#0a0a0a] text-white pb-10 sm:pb-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="mx-auto max-w-[1600px] px-4 sm:px-6">
         {products.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-14 text-center">
             <p className="text-sm text-white/50">No exclusive pieces available right now.</p>
