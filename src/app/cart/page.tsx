@@ -112,7 +112,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-12">
+    <div className="mx-auto max-w-3xl px-6 py-8">
       <h1 className="mb-10 text-3xl font-extrabold tracking-tight">Cart</h1>
 
       <div className="divide-y divide-gray-100">

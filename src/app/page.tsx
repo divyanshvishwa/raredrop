@@ -42,11 +42,11 @@ export default async function HomePage() {
       {/* Hero Section */}
       <section className="relative">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 min-h-[60vh] lg:min-h-[85vh]">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-[50vh] lg:min-h-[65vh]">
 
             {/* Hero Content */}
-            <div className="flex flex-col justify-center py-12 lg:py-24">
-              <div className="space-y-6 lg:space-y-8">
+            <div className="flex flex-col justify-center py-8 lg:py-12">
+              <div className="space-y-4 lg:space-y-5">
                 <div className="space-y-3">
                   <p className="hero-fade-in text-[11px] font-medium uppercase tracking-[0.3em] text-muted">
                     Drop 001 — Summer 2026
@@ -85,7 +85,7 @@ export default async function HomePage() {
             </div>
 
             {/* Hero Images */}
-            <div className="grid grid-cols-2 gap-3 sm:gap-5 py-6 lg:py-24">
+            <div className="grid grid-cols-2 gap-3 sm:gap-5 py-4 lg:py-12">
               {coreProducts.slice(0, 2).map((product, i) => (
                 <Link href={`/product/${product.id}`} key={product.id} className={`card-3d group ${i === 0 ? 'hero-image-enter' : 'hero-image-enter-delay'}`}>
                   <div className="card-3d-inner relative aspect-[3/4] overflow-hidden rounded-lg bg-card shadow-lg img-hover-zoom">
@@ -133,8 +133,8 @@ export default async function HomePage() {
       </section>
 
       {/* Core Collection */}
-      <section id="collection" className="mx-auto max-w-7xl px-4 sm:px-6 py-12 sm:py-24">
-        <Reveal className="mb-8 sm:mb-16 space-y-3">
+      <section id="collection" className="mx-auto max-w-7xl px-4 sm:px-6 py-8 sm:py-14">
+        <Reveal className="mb-6 sm:mb-10 space-y-2">
           <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted">
             Drop 001 — Core
           </p>
@@ -155,8 +155,8 @@ export default async function HomePage() {
       {/* Exclusive 1/1 Collection — premium dark section */}
       {exclusiveProducts.length > 0 && (
         <section id="exclusive" className="bg-[#0a0a0a] text-white">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12 sm:py-24">
-            <Reveal className="mb-8 sm:mb-16 space-y-3">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8 sm:py-14">
+            <Reveal className="mb-6 sm:mb-10 space-y-2">
               <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-white/50">
                 One of One — Exclusive
               </p>
@@ -178,9 +178,9 @@ export default async function HomePage() {
 
       {/* About / Brand */}
       <section id="about" className="border-t border-border">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12 sm:py-24">
-          <div className="grid grid-cols-1 gap-10 sm:gap-16 md:grid-cols-2 md:items-center">
-            <Reveal variant="left" className="space-y-6">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8 sm:py-14">
+          <div className="grid grid-cols-1 gap-6 sm:gap-10 md:grid-cols-2 md:items-center">
+            <Reveal variant="left" className="space-y-4">
               <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted">
                 The Philosophy
               </p>
@@ -228,9 +228,9 @@ export default async function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border py-10 sm:py-16">
+      <footer className="border-t border-border py-6 sm:py-10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <Reveal className="flex flex-col items-center gap-6 text-center">
+          <Reveal className="flex flex-col items-center gap-4 text-center">
             <p className="text-lg font-extrabold tracking-tight">RAREDROP</p>
             <p className="text-xs text-muted max-w-xs">Limited Edition. Never Restocked. Never Repeated.</p>
             <div className="flex flex-wrap justify-center gap-8 text-xs font-medium uppercase tracking-[0.2em] text-muted">

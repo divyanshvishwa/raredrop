@@ -9,7 +9,7 @@ export default function WishlistPage() {
 
   return (
     <div className="min-h-screen">
-      <div className="mx-auto max-w-5xl px-6 py-16">
+      <div className="mx-auto max-w-5xl px-6 py-10">
         {/* Header */}
         <div className="space-y-2">
           <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted">

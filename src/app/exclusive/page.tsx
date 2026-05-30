@@ -32,8 +32,8 @@ export default async function ExclusivePage() {
     <div className="min-h-screen">
       {/* Header */}
       <section className="bg-[#0a0a0a] text-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-16 sm:pt-28 pb-10 sm:pb-16">
-          <Reveal className="space-y-4">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-10 sm:pt-16 pb-6 sm:pb-10">
+          <Reveal className="space-y-3">
             <p className="text-[10px] font-semibold uppercase tracking-[0.35em] text-white/50">
               One of One — Only 1 Piece Exists
             </p>
@@ -59,10 +59,10 @@ export default async function ExclusivePage() {
       </section>
 
       {/* Product Grid */}
-      <section className="bg-[#0a0a0a] text-white pb-16 sm:pb-32">
+      <section className="bg-[#0a0a0a] text-white pb-10 sm:pb-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
         {products.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 text-center">
+          <div className="flex flex-col items-center justify-center py-14 text-center">
             <p className="text-sm text-white/50">No exclusive pieces available right now.</p>
             <Link
               href="/"
@@ -72,7 +72,7 @@ export default async function ExclusivePage() {
             </Link>
           </div>
         ) : (
-          <StaggerReveal variant="scale" className="grid grid-cols-1 gap-x-8 gap-y-16 sm:grid-cols-2 lg:grid-cols-3">
+          <StaggerReveal variant="scale" className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
             {products.map((product) => (
               <ExclusiveCard key={product.id} product={product} />
             ))}
