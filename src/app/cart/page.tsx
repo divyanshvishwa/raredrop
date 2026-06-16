@@ -62,6 +62,7 @@ export default function CartPage() {
                 productId: i.productId,
                 quantity: i.quantity,
                 size: i.size,
+                color: i.color,
               })),
             }),
           });
@@ -118,7 +119,7 @@ export default function CartPage() {
       <div className="divide-y divide-gray-100">
         {items.map((item: CartItem) => (
           <div
-            key={`${item.productId}-${item.size}`}
+            key={`${item.productId}-${item.size}-${item.color}`}
             className="flex items-center gap-6 py-6"
           >
             <div className="relative h-24 w-24 shrink-0 overflow-hidden bg-neutral-100">
@@ -139,6 +140,7 @@ export default function CartPage() {
             <div className="flex-1 space-y-1">
               <p className="text-sm font-medium">{item.name}</p>
               <p className="text-xs text-muted">Size: {item.size}</p>
+              {item.color && <p className="text-xs text-muted">Color: {item.color}</p>}
               <p className="text-xs text-muted">Qty: {item.quantity}</p>
             </div>
             <div className="text-right space-y-2">
@@ -146,7 +148,7 @@ export default function CartPage() {
                 ₹{(item.price * item.quantity).toLocaleString("en-IN")}
               </p>
               <button
-                onClick={() => removeItem(item.productId, item.size)}
+                onClick={() => removeItem(item.productId, item.size, item.color)}
                 className="text-xs text-muted hover:text-foreground transition-colors"
               >
                 Remove

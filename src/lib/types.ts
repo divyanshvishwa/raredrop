@@ -1,3 +1,9 @@
+export interface ProductColor {
+  name: string;
+  hex: string;
+  image_url: string;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -12,6 +18,7 @@ export interface Product {
   category: string | null;
   gender: string | null;
   created_at: string;
+  colors?: ProductColor[];
 }
 
 export interface Order {
@@ -20,6 +27,7 @@ export interface Order {
   product_id: string;
   quantity: number;
   size: string | null;
+  color: string | null;
   payment_status: "pending" | "paid" | "failed";
   stripe_session_id: string | null;
   created_at: string;

@@ -2,9 +2,14 @@
 
 import { useState } from "react";
 import { useCartStore } from "@/lib/store";
-import type { Product } from "@/lib/types";
+import type { Product, ProductColor } from "@/lib/types";
 
-export function AddToCartButton({ product }: { product: Product }) {
+interface AddToCartButtonProps {
+  product: Product;
+  selectedColor?: ProductColor | null;
+}
+
+export function AddToCartButton({ product, selectedColor }: AddToCartButtonProps) {
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [added, setAdded] = useState(false);
   const addItem = useCartStore((s) => s.addItem);
@@ -19,7 +24,8 @@ export function AddToCartButton({ product }: { product: Product }) {
       name: product.name,
       price: product.price,
       size: selectedSize,
-      imageUrl: product.image_url,
+      color: selectedColor?.name,
+      imageUrl: selectedColor ? selectedColor.image_url : product.image_url,
     });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
