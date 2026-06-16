@@ -4,22 +4,21 @@ import { supabase } from "@/lib/supabase";
 import type { Product } from "@/lib/types";
 
 /**
- * Style-pairing engine: maps each category to the complementary categories
- * that would "complete the look" — e.g. a T-Shirt pairs with Accessories,
- * Caps, Pants, and Jackets rather than more T-Shirts.
+ * Style-pairing engine: maps each category to complementary categories
+ * that would "complete the look". Order matters — first items are preferred.
  */
 const STYLE_PAIRINGS: Record<string, string[]> = {
-  "T-Shirts":       ["Accessories", "Caps", "Pants", "Jackets"],
+  "T-Shirts":       ["Accessories", "Caps", "Pants", "Jackets", "Hoodies"],
   "Oversized Tees": ["Accessories", "Caps", "Pants", "Jackets"],
-  "Hoodies":        ["Accessories", "Caps", "Pants"],
-  "Sweatshirts":    ["Accessories", "Caps", "Pants"],
+  "Hoodies":        ["Accessories", "Caps", "Pants", "T-Shirts"],
+  "Sweatshirts":    ["Accessories", "Caps", "Pants", "T-Shirts"],
   "Jackets":        ["T-Shirts", "Accessories", "Caps", "Pants"],
-  "Pants":          ["T-Shirts", "Hoodies", "Accessories", "Caps"],
-  "Caps":           ["T-Shirts", "Hoodies", "Accessories", "Jackets"],
-  "Accessories":    ["T-Shirts", "Hoodies", "Caps", "Oversized Tees"],
+  "Pants":          ["T-Shirts", "Hoodies", "Accessories", "Caps", "Oversized Tees"],
+  "Caps":           ["T-Shirts", "Hoodies", "Accessories", "Jackets", "Oversized Tees"],
+  "Accessories":    ["T-Shirts", "Hoodies", "Caps", "Oversized Tees", "Jackets", "Pants"],
 };
 
-// Friendly label for each pairing suggestion
+// Friendly labels for pairing suggestions
 const PAIRING_LABELS: Record<string, string> = {
   "T-Shirts":       "Pair with a tee",
   "Oversized Tees": "Layer with an oversized tee",
@@ -37,42 +36,115 @@ interface CompleteTheLookProps {
   gender: string | null;
 }
 
+/**
+ * Use the product ID to create a deterministic but varied "seed" so that
+ * different products show different recommendations, but the same product
+ * always shows the same set (no random flicker on refresh).
+ */
+function hashId(id: string): number {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) {
+    const char = id.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32-bit integer
+  }
+  return Math.abs(hash);
+}
+
 async function getStylePairings(
   currentId: string,
   category: string | null,
   gender: string | null
 ): Promise<{ label: string; product: Product }[]> {
-  if (!category || !STYLE_PAIRINGS[category]) return [];
-
-  const complementaryCategories = STYLE_PAIRINGS[category];
-  const results: { label: string; product: Product }[] = [];
-
-  for (const pairCat of complementaryCategories) {
-    // Prefer same gender or Unisex
-    let query = supabase
+  if (!category) {
+    // If no category, try to recommend accessories and other popular items
+    const { data } = await supabase
       .from("products")
       .select("*")
-      .eq("category", pairCat)
       .neq("id", currentId)
-      .gt("remaining_quantity", 0) // only in-stock items
-      .limit(3);
+      .gt("remaining_quantity", 0)
+      .limit(20);
 
-    const { data } = await query;
+    if (!data || data.length === 0) return [];
 
-    if (data && data.length > 0) {
-      // Prefer same gender, then unisex, then any
-      const products = data as Product[];
-      const sameGender = products.find((p) => p.gender === gender);
-      const unisex = products.find((p) => p.gender === "Unisex");
-      const pick = sameGender || unisex || products[0];
+    const products = data as Product[];
+    const seed = hashId(currentId);
+    const results: { label: string; product: Product }[] = [];
+    const usedIds = new Set<string>();
 
-      results.push({
-        label: PAIRING_LABELS[pairCat] || pairCat,
-        product: pick,
-      });
+    // Pick varied categories
+    const categories = [...new Set(products.map(p => p.category).filter(Boolean))];
+    
+    for (let i = 0; i < Math.min(4, categories.length); i++) {
+      const catIdx = (seed + i * 7) % categories.length;
+      const cat = categories[catIdx]!;
+      const catProducts = products.filter(p => p.category === cat && !usedIds.has(p.id));
+      
+      if (catProducts.length > 0) {
+        // Prefer same gender
+        const sameGender = catProducts.find(p => p.gender === gender);
+        const unisex = catProducts.find(p => p.gender === "Unisex");
+        const pickIdx = (seed + i * 13) % catProducts.length;
+        const pick = sameGender || unisex || catProducts[pickIdx];
+        usedIds.add(pick.id);
+        results.push({
+          label: PAIRING_LABELS[cat] || `Add ${cat.toLowerCase()}`,
+          product: pick,
+        });
+      }
+    }
+    return results;
+  }
+
+  const complementaryCategories = STYLE_PAIRINGS[category];
+  if (!complementaryCategories) return [];
+
+  // Fetch all potential products in one query for efficiency
+  const { data: allProducts } = await supabase
+    .from("products")
+    .select("*")
+    .in("category", complementaryCategories)
+    .neq("id", currentId)
+    .gt("remaining_quantity", 0);
+
+  if (!allProducts || allProducts.length === 0) return [];
+
+  const products = allProducts as Product[];
+  const seed = hashId(currentId);
+  const results: { label: string; product: Product }[] = [];
+  const usedIds = new Set<string>();
+
+  for (let i = 0; i < complementaryCategories.length; i++) {
+    const pairCat = complementaryCategories[i];
+    const catProducts = products.filter(
+      (p) => p.category === pairCat && !usedIds.has(p.id)
+    );
+
+    if (catProducts.length === 0) continue;
+
+    // Gender-aware selection with variety using deterministic seed
+    const sameGender = catProducts.filter((p) => p.gender === gender);
+    const unisex = catProducts.filter((p) => p.gender === "Unisex");
+    
+    let pool: Product[];
+    if (sameGender.length > 0) {
+      pool = sameGender;
+    } else if (unisex.length > 0) {
+      pool = unisex;
+    } else {
+      pool = catProducts;
     }
 
-    // Cap at 4 pairings max
+    // Use seed to pick different items for different products
+    const pickIdx = (seed + i * 17) % pool.length;
+    const pick = pool[pickIdx];
+    usedIds.add(pick.id);
+
+    results.push({
+      label: PAIRING_LABELS[pairCat] || pairCat,
+      product: pick,
+    });
+
     if (results.length >= 4) break;
   }
 
@@ -88,7 +160,6 @@ export async function CompleteTheLook({
 
   if (pairings.length === 0) return null;
 
-  // Calculate total outfit price
   const outfitTotal = pairings.reduce((sum, p) => sum + p.product.price, 0);
 
   return (
