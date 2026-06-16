@@ -7,6 +7,7 @@ import { Reveal } from "@/components/reveal";
 import { ProductGallery } from "@/components/product-gallery";
 import { RelatedProducts } from "@/components/related-products";
 import { CustomerReviews } from "@/components/customer-reviews";
+import { CompleteTheLook } from "@/components/complete-the-look";
 
 export const revalidate = 15;
 
@@ -150,6 +151,13 @@ export default async function ProductPage({
           </Reveal>
         </div>
       </div>
+
+      {/* Complete the Look — Outfit Recommendations */}
+      <CompleteTheLook
+        currentProductId={product.id}
+        category={product.category}
+        gender={product.gender}
+      />
       
       {/* Customer Reviews */}
       <CustomerReviews />
