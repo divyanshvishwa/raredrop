@@ -4,8 +4,7 @@ import { supabase } from "@/lib/supabase";
 import type { Product } from "@/lib/types";
 
 /**
- * Style-pairing engine: maps each category to complementary categories
- * that would "complete the look". Order matters — first items are preferred.
+ * Style-pairing engine: maps each category to complementary categories.
  */
 const STYLE_PAIRINGS: Record<string, string[]> = {
   "T-Shirts":       ["Accessories", "Caps", "Pants", "Jackets", "Hoodies"],
@@ -18,7 +17,6 @@ const STYLE_PAIRINGS: Record<string, string[]> = {
   "Accessories":    ["T-Shirts", "Hoodies", "Caps", "Oversized Tees", "Jackets", "Pants"],
 };
 
-// Friendly labels for pairing suggestions
 const PAIRING_LABELS: Record<string, string> = {
   "T-Shirts":       "Pair with a tee",
   "Oversized Tees": "Layer with an oversized tee",
@@ -30,6 +28,14 @@ const PAIRING_LABELS: Record<string, string> = {
   "Accessories":    "Finish with an accessory",
 };
 
+// Labels for same-category recommendations (accessory-to-accessory etc.)
+const SAME_CAT_LABELS = [
+  "Stack with this",
+  "Layer this piece",
+  "Pairs well with",
+  "Also goes with",
+];
+
 interface CompleteTheLookProps {
   currentProductId: string;
   category: string | null;
@@ -37,16 +43,15 @@ interface CompleteTheLookProps {
 }
 
 /**
- * Use the product ID to create a deterministic but varied "seed" so that
- * different products show different recommendations, but the same product
- * always shows the same set (no random flicker on refresh).
+ * Deterministic hash from product ID so different products show
+ * different recommendations, but same product always shows same set.
  */
 function hashId(id: string): number {
   let hash = 0;
   for (let i = 0; i < id.length; i++) {
     const char = id.charCodeAt(i);
     hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32-bit integer
+    hash = hash & hash;
   }
   return Math.abs(hash);
 }
@@ -56,96 +61,94 @@ async function getStylePairings(
   category: string | null,
   gender: string | null
 ): Promise<{ label: string; product: Product }[]> {
-  if (!category) {
-    // If no category, try to recommend accessories and other popular items
-    const { data } = await supabase
-      .from("products")
-      .select("*")
-      .neq("id", currentId)
-      .gt("remaining_quantity", 0)
-      .limit(20);
-
-    if (!data || data.length === 0) return [];
-
-    const products = data as Product[];
-    const seed = hashId(currentId);
-    const results: { label: string; product: Product }[] = [];
-    const usedIds = new Set<string>();
-
-    // Pick varied categories
-    const categories = [...new Set(products.map(p => p.category).filter(Boolean))];
-    
-    for (let i = 0; i < Math.min(4, categories.length); i++) {
-      const catIdx = (seed + i * 7) % categories.length;
-      const cat = categories[catIdx]!;
-      const catProducts = products.filter(p => p.category === cat && !usedIds.has(p.id));
-      
-      if (catProducts.length > 0) {
-        // Prefer same gender
-        const sameGender = catProducts.find(p => p.gender === gender);
-        const unisex = catProducts.find(p => p.gender === "Unisex");
-        const pickIdx = (seed + i * 13) % catProducts.length;
-        const pick = sameGender || unisex || catProducts[pickIdx];
-        usedIds.add(pick.id);
-        results.push({
-          label: PAIRING_LABELS[cat] || `Add ${cat.toLowerCase()}`,
-          product: pick,
-        });
-      }
-    }
-    return results;
-  }
-
-  const complementaryCategories = STYLE_PAIRINGS[category];
-  if (!complementaryCategories) return [];
-
-  // Fetch all potential products in one query for efficiency
-  const { data: allProducts } = await supabase
+  // Fetch ALL in-stock products except the current one
+  const { data: allData } = await supabase
     .from("products")
     .select("*")
-    .in("category", complementaryCategories)
     .neq("id", currentId)
     .gt("remaining_quantity", 0);
 
-  if (!allProducts || allProducts.length === 0) return [];
+  if (!allData || allData.length === 0) return [];
 
-  const products = allProducts as Product[];
+  const allProducts = allData as Product[];
   const seed = hashId(currentId);
   const results: { label: string; product: Product }[] = [];
   const usedIds = new Set<string>();
 
-  for (let i = 0; i < complementaryCategories.length; i++) {
-    const pairCat = complementaryCategories[i];
-    const catProducts = products.filter(
-      (p) => p.category === pairCat && !usedIds.has(p.id)
+  /**
+   * Pick the best product from a pool, preferring same gender then Unisex.
+   * Uses seed + offset for variety across different source products.
+   */
+  function pickFromPool(pool: Product[], offset: number): Product {
+    const sameGender = pool.filter(p => p.gender === gender);
+    const unisex = pool.filter(p => p.gender === "Unisex");
+    const candidates = sameGender.length > 0 ? sameGender : unisex.length > 0 ? unisex : pool;
+    return candidates[(seed + offset * 17) % candidates.length];
+  }
+
+  // Step 1: Try complementary categories first
+  const complementary = category ? (STYLE_PAIRINGS[category] || []) : [];
+  
+  for (let i = 0; i < complementary.length && results.length < 4; i++) {
+    const pairCat = complementary[i];
+    const pool = allProducts.filter(
+      p => p.category === pairCat && !usedIds.has(p.id)
     );
+    if (pool.length === 0) continue;
 
-    if (catProducts.length === 0) continue;
-
-    // Gender-aware selection with variety using deterministic seed
-    const sameGender = catProducts.filter((p) => p.gender === gender);
-    const unisex = catProducts.filter((p) => p.gender === "Unisex");
-    
-    let pool: Product[];
-    if (sameGender.length > 0) {
-      pool = sameGender;
-    } else if (unisex.length > 0) {
-      pool = unisex;
-    } else {
-      pool = catProducts;
-    }
-
-    // Use seed to pick different items for different products
-    const pickIdx = (seed + i * 17) % pool.length;
-    const pick = pool[pickIdx];
+    const pick = pickFromPool(pool, i);
     usedIds.add(pick.id);
-
     results.push({
       label: PAIRING_LABELS[pairCat] || pairCat,
       product: pick,
     });
+  }
 
-    if (results.length >= 4) break;
+  // Step 2: If we still need more, recommend same-category items
+  // (e.g. "stack this ring with this bracelet")
+  if (results.length < 4 && category) {
+    const sameCatPool = allProducts.filter(
+      p => p.category === category && !usedIds.has(p.id)
+    );
+
+    // Shuffle deterministically
+    const sorted = [...sameCatPool].sort((a, b) => {
+      const ha = hashId(a.id + currentId);
+      const hb = hashId(b.id + currentId);
+      return ha - hb;
+    });
+
+    let labelIdx = 0;
+    for (const product of sorted) {
+      if (results.length >= 4) break;
+      usedIds.add(product.id);
+      results.push({
+        label: SAME_CAT_LABELS[labelIdx % SAME_CAT_LABELS.length],
+        product,
+      });
+      labelIdx++;
+    }
+  }
+
+  // Step 3: Final fallback — grab any remaining products
+  if (results.length < 4) {
+    const remaining = allProducts
+      .filter(p => !usedIds.has(p.id))
+      .sort((a, b) => {
+        const ha = hashId(a.id + currentId);
+        const hb = hashId(b.id + currentId);
+        return ha - hb;
+      });
+
+    for (const product of remaining) {
+      if (results.length >= 4) break;
+      const cat = product.category || "item";
+      usedIds.add(product.id);
+      results.push({
+        label: PAIRING_LABELS[cat] || `Add ${cat.toLowerCase()}`,
+        product,
+      });
+    }
   }
 
   return results;
@@ -169,14 +172,7 @@ export async function CompleteTheLook({
         <div className="mb-8 sm:mb-12 space-y-2">
           <div className="flex items-center gap-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="white"
-                strokeWidth="2"
-              >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
               </svg>
             </div>
@@ -201,8 +197,7 @@ export async function CompleteTheLook({
             const soldPercent =
               product.total_quantity > 0
                 ? ((product.total_quantity - product.remaining_quantity) /
-                    product.total_quantity) *
-                  100
+                    product.total_quantity) * 100
                 : 0;
 
             return (
@@ -265,7 +260,6 @@ export async function CompleteTheLook({
                         {product.remaining_quantity}/{product.total_quantity} left
                       </p>
                     </div>
-                    {/* Mini progress bar */}
                     <div className="h-1 w-full rounded-full bg-gray-200 overflow-hidden">
                       <div
                         className={`h-full rounded-full transition-all duration-500 ${
