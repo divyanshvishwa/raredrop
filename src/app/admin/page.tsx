@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/use-auth";
 import { supabaseBrowser } from "@/lib/supabase-browser";
 import { useEffect, useState, useRef } from "react";
 import type { Product, Order } from "@/lib/types";
+import { CATEGORIES, GENDERS } from "@/lib/constants";
 
 interface OrderWithProduct extends Order {
   products?: { name: string; image_url: string | null; price: number } | null;
@@ -19,7 +20,7 @@ export default function AdminDashboardPage() {
   const [loadingData, setLoadingData] = useState(true);
 
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editForm, setEditForm] = useState({ name: "", price: "", remaining_quantity: "", total_quantity: "", image_url: "", images: [] as string[] });
+  const [editForm, setEditForm] = useState({ name: "", price: "", remaining_quantity: "", total_quantity: "", image_url: "", images: [] as string[], category: "", gender: "" });
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -33,6 +34,8 @@ export default function AdminDashboardPage() {
       total_quantity: String(p.total_quantity),
       image_url: p.image_url ?? "",
       images: p.images ?? [],
+      category: p.category ?? "",
+      gender: p.gender ?? "",
     });
   };
 
@@ -53,6 +56,8 @@ export default function AdminDashboardPage() {
         total_quantity: Number(editForm.total_quantity),
         image_url: editForm.image_url || null,
         images: editForm.images,
+        category: editForm.category || null,
+        gender: editForm.gender || null,
       }),
     });
     const json = await res.json();
@@ -456,6 +461,35 @@ export default function AdminDashboardPage() {
                                 onChange={(e) => setEditForm({ ...editForm, total_quantity: e.target.value })}
                                 className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:border-foreground"
                               />
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                              <label className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted">Category</label>
+                              <select
+                                value={editForm.category}
+                                onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
+                                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:border-foreground"
+                              >
+                                <option value="">— None —</option>
+                                {CATEGORIES.map((c) => (
+                                  <option key={c} value={c}>{c}</option>
+                                ))}
+                              </select>
+                            </div>
+                            <div className="space-y-1.5">
+                              <label className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted">Gender</label>
+                              <select
+                                value={editForm.gender}
+                                onChange={(e) => setEditForm({ ...editForm, gender: e.target.value })}
+                                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:border-foreground"
+                              >
+                                <option value="">— None —</option>
+                                {GENDERS.map((g) => (
+                                  <option key={g} value={g}>{g}</option>
+                                ))}
+                              </select>
                             </div>
                           </div>
 

@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { ExclusiveCard } from "@/components/exclusive-card";
 import { Reveal, StaggerReveal } from "@/components/reveal";
+import { FilteredProductGrid } from "@/components/filtered-product-grid";
 import type { Product } from "@/lib/types";
 import Link from "next/link";
 
@@ -72,11 +73,7 @@ export default async function ExclusivePage() {
             </Link>
           </div>
         ) : (
-          <StaggerReveal variant="scale" className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
-            {products.map((product) => (
-              <ExclusiveCard key={product.id} product={product} />
-            ))}
-          </StaggerReveal>
+          <FilteredProductGrid products={products} variant="exclusive" />
         )}
         </div>
       </section>

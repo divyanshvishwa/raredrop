@@ -9,6 +9,8 @@ export interface Product {
   images: string[];
   drop_id: string;
   sizes: string[];
+  category: string | null;
+  gender: string | null;
   created_at: string;
 }
 

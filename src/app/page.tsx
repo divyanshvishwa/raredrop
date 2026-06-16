@@ -4,6 +4,7 @@ import { supabase } from "@/lib/supabase";
 import { ProductCard } from "@/components/product-card";
 import { Reveal, StaggerReveal } from "@/components/reveal";
 import { CountdownTimer } from "@/components/countdown-timer";
+import { FilteredProductGrid } from "@/components/filtered-product-grid";
 import type { Product } from "@/lib/types";
 
 export const revalidate = 30;
@@ -145,11 +146,7 @@ export default async function HomePage() {
             5–10 units per design · Will never be restocked
           </p>
         </Reveal>
-        <StaggerReveal variant="scale" className="grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-x-6 sm:gap-y-12 md:grid-cols-4">
-          {coreProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </StaggerReveal>
+        <FilteredProductGrid products={coreProducts} variant="core" />
       </section>
 
       {/* Exclusive 1/1 Collection — premium dark section */}

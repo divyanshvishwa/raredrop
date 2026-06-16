@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* ═══ PREVIOUS THEMES (uncomment one to revert) ═══
+
+── Original Warm Beige ──
 @theme inline {
   --color-background: #ece5dd;
   --color-foreground: #0a0a0a;
@@ -8,6 +11,32 @@
   --color-surface: #e3dbd2;
   --color-card: #f5f0eb;
   --color-accent: #c8beb4;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+── Golden Yellow ──
+@theme inline {
+  --color-background: #f5e6a3;
+  --color-foreground: #1a1a1a;
+  --color-muted: #6b5c2e;
+  --color-border: #d4c56e;
+  --color-surface: #efe09a;
+  --color-card: #faf3c8;
+  --color-accent: #ddd07a;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+══════════════════════════════════════════════ */
+
+/* ── Active Theme: Monochrome Editorial ── */
+@theme inline {
+  --color-background: #fafafa;
+  --color-foreground: #111111;
+  --color-muted: #888888;
+  --color-border: #e8e8e8;
+  --color-surface: #f2f2f2;
+  --color-card: #ffffff;
+  --color-accent: #d0d0d0;
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 

@@ -78,15 +78,24 @@ export function Navbar() {
             </svg>
           </button>
 
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted">
+          <div className="hidden md:flex items-center gap-6 text-sm font-medium text-muted">
             <Link href="/" className="hover:text-foreground transition-colors">
               Home
             </Link>
-            <Link href="/#collection" className="hover:text-foreground transition-colors">
-              Drop
+            <Link href="/men" className="hover:text-foreground transition-colors">
+              Men
             </Link>
-            <Link href="/#collection" className="hover:text-foreground transition-colors">
-              Core Collection
+            <Link href="/women" className="hover:text-foreground transition-colors">
+              Women
+            </Link>
+            <Link href="/kids" className="hover:text-foreground transition-colors">
+              Kids
+            </Link>
+            <Link href="/unisex" className="hover:text-foreground transition-colors">
+              Unisex
+            </Link>
+            <Link href="/accessories" className="hover:text-foreground transition-colors">
+              Accessories
             </Link>
             <Link href="/#about" className="hover:text-foreground transition-colors">
               About
@@ -122,7 +131,7 @@ export function Navbar() {
               <circle cx="11" cy="11" r="8" />
               <path d="M21 21l-4.35-4.35" />
             </svg>
-          </button>
+            </button>
 
           {/* Wishlist */}
           <Link href="/wishlist" className="relative text-muted hover:text-foreground transition-colors" aria-label="Wishlist">
@@ -133,7 +142,7 @@ export function Navbar() {
               <span className="absolute -top-1.5 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-medium text-white">
                 {wishlistCount}
               </span>
-            )}
+      )}
           </Link>
 
           {/* Cart */}
@@ -165,7 +174,7 @@ export function Navbar() {
                 <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
                 <circle cx="12" cy="7" r="4" />
               </svg>
-            </button>
+                </button>
 
             {/* Profile Dropdown */}
             {profileOpen && user && (
@@ -224,7 +233,7 @@ export function Navbar() {
                   </button>
                 </div>
               </div>
-            )}
+      )}
           </div>
         </div>
       </nav>
@@ -272,11 +281,20 @@ export function Navbar() {
           <Link href="/" onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-muted hover:text-foreground">
             Home
           </Link>
-          <Link href="/#collection" onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-muted hover:text-foreground">
-            Drop
+          <Link href="/men" onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-muted hover:text-foreground">
+            Men
           </Link>
-          <Link href="/#collection" onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-muted hover:text-foreground">
-            Core Collection
+          <Link href="/women" onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-muted hover:text-foreground">
+            Women
+          </Link>
+          <Link href="/kids" onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-muted hover:text-foreground">
+            Kids
+          </Link>
+          <Link href="/unisex" onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-muted hover:text-foreground">
+            Unisex
+          </Link>
+          <Link href="/accessories" onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-muted hover:text-foreground">
+            Accessories
           </Link>
           <Link href="/exclusive" onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-muted hover:text-foreground">
             Exclusive 1/1
@@ -316,3 +334,4 @@ export function Navbar() {
     </header>
   );
 }
+
