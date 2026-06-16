@@ -173,7 +173,7 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* About / Brand */}
+    {/* About / Brand */}
       <section id="about" className="border-t border-border">
           <div className="mx-auto max-w-[1600px] px-4 sm:px-6 py-8 sm:py-14">
           <div className="grid grid-cols-1 gap-6 sm:gap-10 md:grid-cols-2 md:items-center">
@@ -223,26 +223,6 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="border-t border-border py-6 sm:py-10">
-        <div className="mx-auto max-w-[1600px] px-4 sm:px-6">
-          <Reveal className="flex flex-col items-center gap-4 text-center">
-            <p className="text-lg font-extrabold tracking-tight">RAREDROP</p>
-            <p className="text-xs text-muted max-w-xs">Limited Edition. Never Restocked. Never Repeated.</p>
-            <div className="flex flex-wrap justify-center gap-8 text-xs font-medium uppercase tracking-[0.2em] text-muted">
-              <Link href="/" className="hover:text-foreground transition-colors">Home</Link>
-              <Link href="/#collection" className="hover:text-foreground transition-colors">Drop</Link>
-              <Link href="/#collection" className="hover:text-foreground transition-colors">Core</Link>
-              <Link href="/exclusive" className="hover:text-foreground transition-colors">Exclusive 1/1</Link>
-              <Link href="/cart" className="hover:text-foreground transition-colors">Cart</Link>
-            </div>
-            <p className="text-xs text-accent">
-              &copy; {new Date().getFullYear()} RAREDROP. All rights reserved.
-            </p>
-          </Reveal>
-        </div>
-      </footer>
     </div>
   );
 }
