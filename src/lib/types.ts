@@ -22,8 +22,9 @@ export interface Product {
   description?: string; // Add description to the base Product interface
 }
 
-export interface AccessoryProduct extends Omit<Product, 'price' | 'type' | 'total_quantity' | 'remaining_quantity' | 'images' | 'drop_id' | 'sizes' | 'category' | 'gender' | 'created_at'> {
+export interface AccessoryProduct extends Omit<Product, 'price' | 'image_url' | 'type' | 'total_quantity' | 'remaining_quantity' | 'images' | 'drop_id' | 'sizes' | 'category' | 'gender' | 'created_at'> {
   price: string; // Price is a string for accessories (e.g., '₹123')
+  image_url?: string | null;
   imageUrl?: string;
   link?: string;
   type?: "core" | "exclusive"; // Make optional
