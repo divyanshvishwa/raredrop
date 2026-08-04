@@ -158,7 +158,7 @@ export async function RelatedProducts({
                             Sold Out
                           </span>
                         ) : (
-                          `₹${product.price.toLocaleString("en-IN")}`
+                          `₹${(typeof product.price === "number" ? product.price : Number(String(product.price).replace(/[^0-9.]/g, "")) || 0).toLocaleString("en-IN")}`
                         )}
                       </p>
                       {!soldOut && (

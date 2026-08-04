@@ -10,12 +10,12 @@ interface AddToCartButtonProps {
 }
 
 export function AddToCartButton({ product, selectedColor }: AddToCartButtonProps) {
-  const [selectedSize, setSelectedSize] = useState<string>("");
+  const sizes = product.sizes && product.sizes.length > 0 ? product.sizes : ["S", "M", "L", "XL"];
+  const [selectedSize, setSelectedSize] = useState<string>(sizes.length === 1 ? sizes[0] : "");
   const [added, setAdded] = useState(false);
   const addItem = useCartStore((s) => s.addItem);
 
   const soldOut = product.remaining_quantity === 0;
-  const sizes = product.sizes ?? ["S", "M", "L", "XL"];
 
   const handleAdd = () => {
     if (!selectedSize || soldOut) return;

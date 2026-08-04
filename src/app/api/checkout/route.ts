@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { razorpay } from "@/lib/razorpay";
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { jewelryCollection } from "@/data/jewelry";
 import type { CartItem } from "@/lib/store";
 
 export async function POST(req: NextRequest) {
@@ -14,6 +15,17 @@ export async function POST(req: NextRequest) {
     // Validate stock for each item
     let totalAmount = 0;
     for (const item of items) {
+      const accessory = jewelryCollection.find((j) => j.id === item.productId);
+      if (accessory) {
+        const priceNum =
+          typeof accessory.price === "number"
+            ? accessory.price
+            : Number(String(accessory.price).replace(/[^0-9.]/g, "")) || 0;
+
+        totalAmount += priceNum * item.quantity;
+        continue;
+      }
+
       const { data: product } = await supabaseAdmin
         .from("products")
         .select("remaining_quantity, name, price")

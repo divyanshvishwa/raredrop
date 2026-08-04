@@ -7,7 +7,7 @@ export interface ProductColor {
 export interface Product {
   id: string;
   name: string;
-  price: number;
+  price: number; // Price will be a number in the database
   type: "core" | "exclusive";
   total_quantity: number;
   remaining_quantity: number;
@@ -19,6 +19,21 @@ export interface Product {
   gender: string | null;
   created_at: string;
   colors?: ProductColor[];
+  description?: string; // Add description to the base Product interface
+}
+
+// New interface for accessories, allowing string price and making some fields optional
+export interface AccessoryProduct extends Omit<Product, 'price' | 'type' | 'total_quantity' | 'remaining_quantity' | 'images' | 'drop_id' | 'sizes' | 'category' | 'gender' | 'created_at'> {
+  price: string; // Price is a string for accessories (e.g., '₹123')
+  type?: "core" | "exclusive"; // Make optional
+  total_quantity?: number; // Make optional
+  remaining_quantity?: number; // Make optional
+  images?: string[]; // Make optional
+  drop_id?: string; // Make optional
+  sizes?: string[]; // Make optional
+  category?: string; // Make optional
+  gender?: string; // Make optional
+  created_at?: string; // Make optional
 }
 
 export interface Order {
@@ -54,3 +69,4 @@ export interface Database {
     Enums: Record<string, never>;
   };
 }
+

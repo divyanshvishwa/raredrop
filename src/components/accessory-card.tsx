@@ -1,24 +1,15 @@
-"use client";
-
 import Link from "next/link";
 import Image from "next/image";
 import { WishlistButton } from "./wishlist-button";
+import { AccessoryProduct } from "@/lib/types";
 
-interface AccessoryCardProps {
-  id: string;
-  name: string;
-  price: string;
-  imageUrl: string;
-  link: string;
-}
-
-export function AccessoryCard({ id, name, price, imageUrl, link }: AccessoryCardProps) {
+export function AccessoryCard({ id, name, price, imageUrl, link, description }: AccessoryProduct) {
   return (
     <Link href={link} className="card-3d group block transition-transform duration-300">
       <div className="space-y-4">
         <div className="card-3d-inner relative aspect-[3/4] overflow-hidden rounded-lg bg-card shadow-lg img-hover-zoom">
           <Image
-            src={imageUrl}
+            src={imageUrl as string}
             alt={name}
             fill
             sizes="(max-width: 768px) 50vw, 25vw"
@@ -28,8 +19,8 @@ export function AccessoryCard({ id, name, price, imageUrl, link }: AccessoryCard
             <WishlistButton
               productId={id}
               name={name}
-              price={Number(price.replace(/[^0-9.]/g, ''))}
-              imageUrl={imageUrl}
+              price={Number(price.replace(/[^0-9.]/g, ''))} // Convert INR string to number for WishlistButton
+              imageUrl={imageUrl as string}
             />
           </div>
         </div>

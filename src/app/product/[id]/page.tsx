@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import type { Product } from "@/lib/types";
+import type { Product, AccessoryProduct } from "@/lib/types";
+import { jewelryCollection } from "@/data/jewelry";
 import { ProductInteractive } from "./product-interactive";
 import { RelatedProducts } from "@/components/related-products";
 import { CustomerReviews } from "@/components/customer-reviews";
@@ -8,7 +9,14 @@ import { CompleteTheLook } from "@/components/complete-the-look";
 
 export const revalidate = 15;
 
-async function getProduct(id: string): Promise<Product | null> {
+async function getProduct(id: string): Promise<Product | AccessoryProduct | null> {
+  // First, check if the product exists in the local jewelry collection
+  const accessoryProduct = jewelryCollection.find(item => item.id === id);
+  if (accessoryProduct) {
+    return accessoryProduct;
+  }
+
+  // If not in jewelry collection, fetch from Supabase
   const { data, error } = await supabase
     .from("products")
     .select("*")
@@ -19,6 +27,28 @@ async function getProduct(id: string): Promise<Product | null> {
   return data as Product;
 }
 
+async function getAllProductIds() {
+  const { data, error } = await supabase.from("products").select("id");
+
+  if (error) {
+    console.error("Error fetching product IDs for static params:", error);
+    return [];
+  }
+  return data || [];
+}
+
+export async function generateStaticParams() {
+  const supabaseProducts = await getAllProductIds();
+  const jewelryProductIds = jewelryCollection.map(item => ({ id: item.id }));
+
+  const allProductIds = [
+    ...supabaseProducts.map((product) => ({ id: product.id })),
+    ...jewelryProductIds,
+  ];
+
+  return allProductIds;
+}
+
 export default async function ProductPage({
   params,
 }: {
@@ -27,7 +57,14 @@ export default async function ProductPage({
   const { id } = await params;
   const product = await getProduct(id);
 
-  if (!product) notFound();
+  if (!product) {
+    notFound();
+  }
+
+  // Ensure product.category and product.gender are defined for CompleteTheLook and RelatedProducts
+  const category = product.category || "accessories"; // Default category for accessories
+  const gender = product.gender || "unisex"; // Default gender for accessories
+  const type = product.type || "core"; // Default type for accessories
 
   return (
     <div className="min-h-screen">
@@ -38,8 +75,8 @@ export default async function ProductPage({
       {/* Complete the Look — Outfit Recommendations */}
       <CompleteTheLook
         currentProductId={product.id}
-        category={product.category}
-        gender={product.gender}
+        category={category}
+        gender={gender}
       />
       
       {/* Customer Reviews */}
@@ -48,10 +85,12 @@ export default async function ProductPage({
       {/* Related Products */}
       <RelatedProducts 
         currentProductId={product.id}
-        category={product.category}
-        gender={product.gender}
-        type={product.type}
+        category={category}
+        gender={gender}
+        type={type}
       />
     </div>
   );
 }
+
+

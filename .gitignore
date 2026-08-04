@@ -41,3 +41,8 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+
+# temp files
+WhatsApp Unknown*
+env_temp.txt
+

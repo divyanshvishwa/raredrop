@@ -161,9 +161,10 @@ export async function CompleteTheLook({
 }: CompleteTheLookProps) {
   const pairings = await getStylePairings(currentProductId, category, gender);
 
-  if (pairings.length === 0) return null;
+  const getPrice = (price: number | string) =>
+    typeof price === "number" ? price : Number(String(price).replace(/[^0-9.]/g, "")) || 0;
 
-  const outfitTotal = pairings.reduce((sum, p) => sum + p.product.price, 0);
+  const outfitTotal = pairings.reduce((sum, p) => sum + getPrice(p.product.price), 0);
 
   return (
     <section className="border-t border-border bg-[#fafaf8]">
@@ -254,7 +255,7 @@ export async function CompleteTheLook({
                     </h3>
                     <div className="flex items-center justify-between">
                       <p className="text-sm font-bold">
-                        ₹{product.price.toLocaleString("en-IN")}
+                        ₹{getPrice(product.price).toLocaleString("en-IN")}
                       </p>
                       <p className="text-[9px] font-bold uppercase tracking-[0.1em] text-muted">
                         {product.remaining_quantity}/{product.total_quantity} left

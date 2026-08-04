@@ -5,26 +5,61 @@ import { Reveal } from "@/components/reveal";
 import { ProductGallery } from "@/components/product-gallery";
 import { AddToCartButton } from "./add-to-cart-button";
 import { WishlistButton } from "@/components/wishlist-button";
-import type { Product, ProductColor } from "@/lib/types";
+import type { Product, AccessoryProduct, ProductColor } from "@/lib/types";
 
-export function ProductInteractive({ product }: { product: Product }) {
+export function ProductInteractive({ product }: { product: Product | AccessoryProduct }) {
   const [selectedColor, setSelectedColor] = useState<ProductColor | null>(
     product.colors && product.colors.length > 0 ? product.colors[0] : null
   );
 
-  const soldOut = product.remaining_quantity === 0;
+  const remainingQty = product.remaining_quantity ?? 100;
+  const totalQty = product.total_quantity ?? 100;
+  const soldOut = remainingQty === 0;
   const isExclusive = product.type === "exclusive";
-  const soldCount = product.total_quantity - product.remaining_quantity;
-  const soldPercent = product.total_quantity > 0 ? (soldCount / product.total_quantity) * 100 : 0;
+  const soldCount = totalQty - remainingQty;
+  const soldPercent = totalQty > 0 ? (soldCount / totalQty) * 100 : 0;
+
+  const numericPrice =
+    typeof product.price === "number"
+      ? product.price
+      : Number(String(product.price).replace(/[^0-9.]/g, "")) || 0;
+
+  const displayPrice =
+    typeof product.price === "number"
+      ? `₹${product.price.toLocaleString("en-IN")}`
+      : String(product.price).startsWith("₹")
+      ? product.price
+      : `₹${product.price}`;
 
   // Determine main image based on color selection
-  const mainImage = selectedColor ? selectedColor.image_url : product.image_url;
+  const mainImage = selectedColor ? selectedColor.image_url : (product.image_url ?? (product as AccessoryProduct).imageUrl ?? "");
   
   // Combine all images for the gallery
-  const galleryImages = product.images ?? [];
+  const galleryImages = [...(product.images ?? [])];
+  if (galleryImages.length === 0 && mainImage) {
+    galleryImages.push(mainImage);
+  }
   if (selectedColor && !galleryImages.includes(selectedColor.image_url)) {
     galleryImages.unshift(selectedColor.image_url);
   }
+
+  const normalizedProduct: Product = {
+    id: product.id,
+    name: product.name,
+    price: numericPrice,
+    type: product.type ?? "core",
+    total_quantity: totalQty,
+    remaining_quantity: remainingQty,
+    image_url: mainImage,
+    images: galleryImages,
+    drop_id: product.drop_id ?? "accessories",
+    sizes: product.sizes ?? ["one-size"],
+    category: product.category ?? "accessories",
+    gender: product.gender ?? "unisex",
+    created_at: product.created_at ?? new Date().toISOString(),
+    colors: product.colors,
+    description: product.description,
+  };
 
   return (
     <div className="grid grid-cols-1 gap-8 sm:gap-16 md:grid-cols-2">
@@ -55,7 +90,7 @@ export function ProductInteractive({ product }: { product: Product }) {
               {product.name}
             </h1>
             <p className="text-xl text-gray-500">
-              ₹{product.price.toLocaleString("en-IN")}
+              {displayPrice}
             </p>
           </div>
 
@@ -109,8 +144,8 @@ export function ProductInteractive({ product }: { product: Product }) {
             ) : (
               <div className="space-y-3">
                 <div className="flex items-baseline gap-2">
-                  <p className={`text-sm font-bold ${product.remaining_quantity <= 2 ? "text-red-500" : "text-foreground"}`}>
-                    Only {product.remaining_quantity} left out of {product.total_quantity}
+                  <p className={`text-sm font-bold ${remainingQty <= 2 ? "text-red-500" : "text-foreground"}`}>
+                    Only {remainingQty} left out of {totalQty}
                   </p>
                 </div>
                 {/* Progress bar */}
@@ -124,7 +159,7 @@ export function ProductInteractive({ product }: { product: Product }) {
                     />
                   </div>
                   <p className="text-[10px] uppercase tracking-[0.15em] text-muted">
-                    {soldCount}/{product.total_quantity} sold
+                    {soldCount}/{totalQty} sold
                   </p>
                 </div>
                 <p className="text-xs text-gray-500">
@@ -136,11 +171,11 @@ export function ProductInteractive({ product }: { product: Product }) {
 
           {/* Wishlist + Add to cart */}
           <div className="flex items-center gap-4">
-            <AddToCartButton product={product} selectedColor={selectedColor} />
+            <AddToCartButton product={normalizedProduct} selectedColor={selectedColor} />
             <WishlistButton
               productId={product.id}
               name={product.name}
-              price={product.price}
+              price={numericPrice}
               imageUrl={mainImage}
               className="scale-150"
             />
