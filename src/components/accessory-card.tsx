@@ -1,9 +1,16 @@
 import Link from "next/link";
 import Image from "next/image";
 import { WishlistButton } from "./wishlist-button";
-import { AccessoryProduct } from "@/lib/types";
+interface AccessoryCardProps {
+  id: string;
+  name: string;
+  price: string;
+  imageUrl?: string | null;
+  link: string;
+  description?: string;
+}
 
-export function AccessoryCard({ id, name, price, imageUrl, link, description }: AccessoryProduct) {
+export function AccessoryCard({ id, name, price, imageUrl, link, description }: AccessoryCardProps) {
   return (
     <Link href={link} className="card-3d group block transition-transform duration-300">
       <div className="space-y-4">

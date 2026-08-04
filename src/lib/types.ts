@@ -22,9 +22,10 @@ export interface Product {
   description?: string; // Add description to the base Product interface
 }
 
-// New interface for accessories, allowing string price and making some fields optional
 export interface AccessoryProduct extends Omit<Product, 'price' | 'type' | 'total_quantity' | 'remaining_quantity' | 'images' | 'drop_id' | 'sizes' | 'category' | 'gender' | 'created_at'> {
   price: string; // Price is a string for accessories (e.g., '₹123')
+  imageUrl?: string;
+  link?: string;
   type?: "core" | "exclusive"; // Make optional
   total_quantity?: number; // Make optional
   remaining_quantity?: number; // Make optional
