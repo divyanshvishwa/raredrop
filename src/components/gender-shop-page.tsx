@@ -3,6 +3,7 @@ import { Reveal } from "@/components/reveal";
 import { FilteredProductGrid } from "@/components/filtered-product-grid";
 import type { Product } from "@/lib/types";
 import Link from "next/link";
+import { getNormalizedJewelryProducts } from "@/data/jewelry";
 
 interface GenderShopPageProps {
   gender?: "Male" | "Female" | "Unisex" | "Kids";
@@ -22,12 +23,24 @@ async function getProductsByGender(gender: string): Promise<Product[]> {
 
   if (error) {
     console.error("Error fetching products by gender:", error.message, error);
-    return [];
   }
-  return (data as Product[]) ?? [];
+  const supabaseProducts = (data as Product[]) ?? [];
+  const filteredSupabase = supabaseProducts.filter(
+    (p) => p.category !== "Accessories" && !p.image_url?.includes("acc-")
+  );
+
+  const jewelryProducts = getNormalizedJewelryProducts().filter(
+    (j) => j.gender === gender || (gender === "Female" && j.gender === "Female") || gender === "Unisex"
+  );
+
+  return [...filteredSupabase, ...jewelryProducts];
 }
 
 async function getProductsByCategory(category: string): Promise<Product[]> {
+  if (category === "Accessories") {
+    return getNormalizedJewelryProducts();
+  }
+
   const { data, error } = await supabase
     .from("products")
     .select("*")
@@ -36,7 +49,6 @@ async function getProductsByCategory(category: string): Promise<Product[]> {
 
   if (error) {
     console.error("Error fetching products by category:", error.message, error);
-    return [];
   }
   return (data as Product[]) ?? [];
 }

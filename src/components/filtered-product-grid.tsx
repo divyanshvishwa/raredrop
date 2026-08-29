@@ -338,6 +338,7 @@ export function FilteredProductGrid({
         </div>
       ) : isDark ? (
         <StaggerReveal
+          key={`exclusive-grid-${filtered.map((p) => p.id).join("-")}`}
           variant="scale"
           className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3"
         >
@@ -347,6 +348,7 @@ export function FilteredProductGrid({
         </StaggerReveal>
       ) : (
         <StaggerReveal
+          key={`core-grid-${filtered.map((p) => p.id).join("-")}`}
           variant="scale"
           className="grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-x-6 sm:gap-y-12 md:grid-cols-4"
         >

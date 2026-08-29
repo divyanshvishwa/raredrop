@@ -11,13 +11,15 @@ interface ProductGalleryProps {
 }
 
 export function ProductGallery({ mainImage, images, name, isExclusive }: ProductGalleryProps) {
-  // Combine main image + gallery images, deduplicating
-  const allImages = [mainImage, ...images].filter((url): url is string => !!url);
+  // Combine main image + gallery images, deduplicating non-empty strings
+  const allImages = [mainImage, ...(images || [])].filter(
+    (url): url is string => typeof url === "string" && url.trim().length > 0
+  );
   const uniqueImages = [...new Set(allImages)];
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const selectedImage = uniqueImages[selectedIndex] ?? null;
+  const selectedImage = uniqueImages[selectedIndex] || uniqueImages[0] || null;
 
-  if (uniqueImages.length === 0) {
+  if (!selectedImage) {
     return (
       <div className="relative aspect-[3/4] overflow-hidden bg-white rounded-lg shadow-lg flex items-center justify-center">
         <span className="text-muted">No image</span>
@@ -30,12 +32,13 @@ export function ProductGallery({ mainImage, images, name, isExclusive }: Product
       {/* Main Image */}
       <div className="relative aspect-[3/4] overflow-hidden bg-white img-hover-zoom rounded-lg shadow-lg">
         <Image
-          src={selectedImage!}
+          src={selectedImage}
           alt={name}
           fill
           sizes="(max-width: 768px) 100vw, 50vw"
           className="object-cover transition-opacity duration-300"
           priority
+          loading="eager"
         />
         {/* Type badge */}
         <div className="absolute top-4 left-4">

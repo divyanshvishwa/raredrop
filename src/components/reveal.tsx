@@ -63,20 +63,30 @@ export function StaggerReveal({ children, className = "", variant = "up", stagge
     const el = ref.current;
     if (!el) return;
 
+    const showItems = () => {
+      const items = el.querySelectorAll(".stagger-item");
+      items.forEach((item) => item.classList.add("visible"));
+    };
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          const items = el.querySelectorAll(".stagger-item");
-          items.forEach((item) => item.classList.add("visible"));
-          observer.unobserve(el);
+          showItems();
         }
       },
-      { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+      { threshold: 0.05, rootMargin: "0px 0px -20px 0px" }
     );
 
     observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
+    // Ensure all items are made visible when filtering or dynamic re-renders happen
+    showItems();
+    const timer = setTimeout(showItems, 30);
+
+    return () => {
+      clearTimeout(timer);
+      observer.disconnect();
+    };
+  }, [children]);
 
   const variantClass = {
     up: "reveal",
@@ -101,3 +111,4 @@ export function StaggerReveal({ children, className = "", variant = "up", stagge
     </div>
   );
 }
+

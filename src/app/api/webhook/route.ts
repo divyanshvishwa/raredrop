@@ -37,31 +37,36 @@ export async function POST(req: NextRequest) {
     }
 
     // Process each item: create order + reduce stock
-    const parsedItems: { productId: string; quantity: number; size: string }[] =
-      typeof items === "string" ? JSON.parse(items) : items;
+    const parsedItems: { productId: string; quantity: number; size: string; color?: string }[] =
+      typeof items === "string" ? JSON.parse(items) : items || [];
 
     for (const item of parsedItems) {
-      await supabaseAdmin.from("orders").insert({
-        email: email || "unknown",
-        product_id: item.productId,
-        quantity: item.quantity,
-        size: item.size,
-        payment_status: "paid",
-        stripe_session_id: razorpay_payment_id, // reusing column for razorpay payment id
-      });
+      try {
+        await supabaseAdmin.from("orders").insert({
+          email: email || "unknown",
+          product_id: item.productId,
+          quantity: item.quantity,
+          size: item.size || "one-size",
+          color: item.color || null,
+          payment_status: "paid",
+          stripe_session_id: razorpay_payment_id, // reusing column for razorpay payment id
+        });
 
-      const { data: product } = await supabaseAdmin
-        .from("products")
-        .select("remaining_quantity")
-        .eq("id", item.productId)
-        .single();
-
-      if (product) {
-        const newQty = Math.max(0, product.remaining_quantity - item.quantity);
-        await supabaseAdmin
+        const { data: product } = await supabaseAdmin
           .from("products")
-          .update({ remaining_quantity: newQty })
-          .eq("id", item.productId);
+          .select("remaining_quantity")
+          .eq("id", item.productId)
+          .single();
+
+        if (product) {
+          const newQty = Math.max(0, product.remaining_quantity - item.quantity);
+          await supabaseAdmin
+            .from("products")
+            .update({ remaining_quantity: newQty })
+            .eq("id", item.productId);
+        }
+      } catch (itemError) {
+        console.error("Error recording order/updating stock for item:", item.productId, itemError);
       }
     }
 
@@ -74,3 +79,4 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+

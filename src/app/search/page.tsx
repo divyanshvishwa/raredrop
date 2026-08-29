@@ -2,6 +2,7 @@ import { supabase } from "@/lib/supabase";
 import { ProductCard } from "@/components/product-card";
 import Link from "next/link";
 import type { Product } from "@/lib/types";
+import { getNormalizedJewelryProducts } from "@/data/jewelry";
 
 export const revalidate = 0;
 
@@ -14,9 +15,23 @@ async function searchProducts(query: string): Promise<Product[]> {
 
   if (error) {
     console.error("Search error:", error);
-    return [];
   }
-  return (data as Product[]) ?? [];
+  const supabaseProducts = (data as Product[]) ?? [];
+  const filteredSupabase = supabaseProducts.filter(
+    (p) => p.category !== "Accessories" && !p.image_url?.includes("acc-")
+  );
+
+  const lowerQ = query.toLowerCase().trim();
+  const jewelryProducts = getNormalizedJewelryProducts().filter(
+    (j) =>
+      j.name.toLowerCase().includes(lowerQ) ||
+      (j.description && j.description.toLowerCase().includes(lowerQ)) ||
+      "accessories".includes(lowerQ) ||
+      "earrings".includes(lowerQ) ||
+      "jewelry".includes(lowerQ)
+  );
+
+  return [...filteredSupabase, ...jewelryProducts];
 }
 
 export default async function SearchPage({

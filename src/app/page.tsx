@@ -6,6 +6,7 @@ import { Reveal, StaggerReveal } from "@/components/reveal";
 import { CountdownTimer } from "@/components/countdown-timer";
 import { FilteredProductGrid } from "@/components/filtered-product-grid";
 import type { Product } from "@/lib/types";
+import { getNormalizedJewelryProducts } from "@/data/jewelry";
 
 export const revalidate = 30;
 
@@ -19,11 +20,14 @@ async function getProducts(): Promise<Product[]> {
     .eq("drop_id", "drop-001")
     .order("created_at", { ascending: true });
 
-  if (error) {
-    console.error("Error fetching products:", error);
-    return [];
-  }
-  return (data as Product[]) ?? [];
+  const supabaseProducts = (data as Product[]) ?? [];
+  // Filter out outdated seed accessories from database and replace with current jewelry
+  const filteredSupabase = supabaseProducts.filter(
+    (p) => p.category !== "Accessories" && !p.image_url?.includes("acc-")
+  );
+  const jewelryProducts = getNormalizedJewelryProducts();
+
+  return [...filteredSupabase, ...jewelryProducts];
 }
 
 export default async function HomePage() {

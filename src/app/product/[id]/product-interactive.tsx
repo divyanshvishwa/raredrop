@@ -32,16 +32,17 @@ export function ProductInteractive({ product }: { product: Product | AccessoryPr
       : `₹${product.price}`;
 
   // Determine main image based on color selection
-  const mainImage = selectedColor ? selectedColor.image_url : (product.image_url ?? (product as AccessoryProduct).imageUrl ?? "");
+  const rawMainImage = selectedColor?.image_url || product.image_url || (product as AccessoryProduct).imageUrl || "";
   
-  // Combine all images for the gallery
-  const galleryImages = [...(product.images ?? [])];
-  if (galleryImages.length === 0 && mainImage) {
-    galleryImages.push(mainImage);
-  }
-  if (selectedColor && !galleryImages.includes(selectedColor.image_url)) {
-    galleryImages.unshift(selectedColor.image_url);
-  }
+  // Combine all valid images for the gallery
+  const galleryImages = [
+    rawMainImage,
+    ...(product.images ?? []),
+    ...(selectedColor ? [selectedColor.image_url] : []),
+  ].filter((url): url is string => typeof url === "string" && url.trim().length > 0);
+
+  const mainImage = galleryImages[0] || "";
+
 
   const normalizedProduct: Product = {
     id: product.id,
