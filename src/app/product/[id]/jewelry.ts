@@ -60,4 +60,54 @@ export const jewelryCollection: Jewelry[] = [
     gender: 'Female',
     type: 'Jhumka'
   },
-];
+  {
+    id: 'golden-teardrop-studs-01',
+    name: 'Golden Teardrop Citrine Stud Earrings',
+    price: '₹390',
+    imageUrl: '/products/accessories/golden-teardrop-studs-01.jpg',
+    description: 'Modern minimal teardrop silhouette crafted in 18K yellow gold tone with a smooth cabochon golden citrine center stone.',
+    category: 'Earrings',
+    gender: 'Female',
+    type: 'Stud'
+  },
+  {
+    id: 'carnelian-ball-drop-01',
+    name: 'Deep Red Carnelian & Solitaire Drop Earrings',
+    price: '₹440',
+    imageUrl: '/products/accessories/carnelian-ball-drop-01.jpg',
+    description: 'Avant-garde drop design combining rich deep-red carnelian orb tops with slender silver stems and brilliant solitaire crystal accents.',
+    category: 'Earrings',
+    gender: 'Female',
+    type: 'Drop'
+  },
+  {
+    id: 'gold-butterfly-studs-01',
+    name: 'Baguette Crystal Gold Butterfly Studs',
+    price: '₹320',
+    imageUrl: '/products/accessories/gold-butterfly-studs-01.jpg',
+    description: 'Delicate yellow gold butterfly studs featuring shimmering baguette-cut cubic zirconia cluster centers.',
+    category: 'Earrings',
+    gender: 'Female',
+    type: 'Stud'
+  },
+  {
+    id: 'diamond-lattice-jhumka-01',
+    name: 'Geometric Diamond Lattice Oxidized Jhumka',
+    price: '₹520',
+    imageUrl: '/products/accessories/diamond-lattice-jhumka-01.jpg',
+    description: 'Grand statement oxidized silver earrings with an intricate diamond lattice panel, hanging ghungroo beads, and classic jhumka dome.',
+    category: 'Earrings',
+    gender: 'Female',
+    type: 'Jhumka'
+  },
+  {
+    id: 'sunflower-medallion-jhumka-01',
+    name: 'Sunflower Medallion Oxidized Jhumka Earrings',
+    price: '₹410',
+    imageUrl: '/products/accessories/sunflower-medallion-jhumka-01.jpg',
+    description: 'Beautifully detailed sunflower medallion stud top attached to a textured silver jhumka dome with mini bead droplets.',
+    category: 'Earrings',
+    gender: 'Female',
+    type: 'Jhumka'
+  },
+];
